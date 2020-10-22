@@ -13,6 +13,8 @@ const PHOTOS = [
 const COUNT_ADS = 8;
 const COUNT_ROOMS = 3;
 const COUNT_GUESTS = 5;
+const OFFSET_X = 25;
+const OFFSET_Y = 70;
 
 const PRICE_RANGE = {
   min: 15000,
@@ -25,90 +27,97 @@ const LOCATION_RANGE_Y = {
 };
 
 const LOCATION_RANGE_X = {
-  min: 0,
-  max: 1150
+  min: 25,
+  max: 1175
 };
 
-const generationFeatures = function () {
-  let sourceArr = FEATURES;
-  const arr = [];
+const generateFeatures = function () {
+  let sourceFeatures = FEATURES.slice();
+  const features = [];
 
-  const countFeatures = Math.floor(Math.random() * (sourceArr.length + 1));
+  const countFeatures = Math.floor(Math.random() * (sourceFeatures.length + 1));
 
   for (let i = 0; i < countFeatures; i++) {
-    const randomIndex = Math.floor(Math.random() * sourceArr.length);
-    arr.push(sourceArr[randomIndex]);
-    sourceArr = sourceArr.splice(randomIndex, 1);
+    const randomIndex = Math.floor(Math.random() * sourceFeatures.length);
+
+    features.push(sourceFeatures[randomIndex]);
+    sourceFeatures.splice(randomIndex, 1);
   }
 
-  return arr;
+  return features;
 };
 
-const generationPhotos = function () {
-  let sourceArr = PHOTOS;
-  const arr = [];
+const generatePhotos = function () {
+  let sourcePhotos = PHOTOS.slice();
+  const photos = [];
 
-  const countPhotos = Math.floor(Math.random() * (sourceArr.length + 1));
+  const countPhotos = Math.floor(Math.random() * (sourcePhotos.length + 1));
 
   for (let i = 0; i < countPhotos; i++) {
-    arr.push(sourceArr[i]);
+    photos.push(sourcePhotos[i]);
   }
 
-  return arr;
+  return photos;
 };
 
-const generationAd = function (index) {
-  const locationObj = {
+const generateAd = function (index) {
+  const locationValue = {
     x: Math.floor(LOCATION_RANGE_X.min + Math.random() * (LOCATION_RANGE_X.max - LOCATION_RANGE_X.min + 1)),
     y: Math.floor(LOCATION_RANGE_Y.min + Math.random() * (LOCATION_RANGE_Y.max - LOCATION_RANGE_Y.min + 1))
   };
 
-  const offerObj = {
+  const offerValue = {
     title: TITLES[Math.floor(Math.random() * TITLES.length)],
-    address: locationObj.x + `, ` + locationObj.y,
+    address: locationValue.x + `, ` + locationValue.y,
     price: Math.floor(PRICE_RANGE.min + Math.random() * (PRICE_RANGE.max - PRICE_RANGE.min + 1)),
     type: TYPES[Math.floor(Math.random() * TYPES.length)],
     rooms: 1 + Math.floor(Math.random() * COUNT_ROOMS),
     guests: 1 + Math.floor(Math.random() * COUNT_GUESTS),
     checkin: TIMES[Math.floor(Math.random() * TIMES.length)],
     checkout: TIMES[Math.floor(Math.random() * TIMES.length)],
-    features: generationFeatures(),
+    features: generateFeatures(),
     discription: DISCRIPTIONS[Math.floor(Math.random() * DISCRIPTIONS.length)],
-    photos: generationPhotos()
+    photos: generatePhotos()
   };
 
-  const obj = {
+  const ad = {
     author: {
       avatar: `img/avatars/user0` + (index + 1) + `.png`
     },
-    offer: offerObj,
-    location: locationObj
+    offer: offerValue,
+    location: locationValue
   };
 
-  return obj;
+  return ad;
 };
 
-const generationAds = function () {
-  const arr = [];
+const generateAds = function () {
+  const ads = [];
 
   for (let i = 0; i < COUNT_ADS; i++) {
-    arr.push(generationAd(i));
+    ads.push(generateAd(i));
   }
 
-  return arr;
+  return ads;
 };
 
-const map = document.querySelector(`.map`);
-map.classList.remove(`map--faded`);
+const showMap = function () {
+  const map = document.querySelector(`.map`);
 
-const mapPins = map.querySelector(`.map__pins`);
+  return map;
+};
+
+
+showMap().classList.remove(`map--faded`);
+
+const mapPins = showMap().querySelector(`.map__pins`);
 const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 
 const renderPin = function (pinObj) {
   const pinElement = pinTemplate.cloneNode(true);
 
-  pinElement.style.left = pinObj.location.x + `px`;
-  pinElement.style.top = pinObj.location.y + `px`;
+  pinElement.style.left = (pinObj.location.x - OFFSET_X) + `px`;
+  pinElement.style.top = (pinObj.location.y - OFFSET_Y) + `px`;
   pinElement.querySelector(`img`).src = pinObj.author.avatar;
   pinElement.querySelector(`img`).alt = pinObj.offer.title;
 
@@ -125,4 +134,4 @@ const renderPins = function (pinsArr) {
   return fragment;
 };
 
-mapPins.appendChild(renderPins(generationAds()));
+mapPins.appendChild(renderPins(generateAds()));
