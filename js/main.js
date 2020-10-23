@@ -4,7 +4,7 @@ const TYPES = [`palace`, `flat`, `house`, `bungalow`];
 const TIMES = [`12:00`, `13:00`, `14:00`];
 const FEATURES = [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`];
 const TITLES = [`Заголовок 1`, `Заголовок 2`, `Заголовок 3`, `Заголовок 4`, `Заголовок 5`, `Заголовок 6`, `Заголовок 7`, `Заголовок 8`];
-const DISCRIPTIONS = [`Описание 1`, `Описание 2`, `Описание 3`, `Описание 4`, `Описание 5`, `Описание 6`, `Описание 7`, `Описание 8`];
+const DESCRIPTIONS = [`Описание 1`, `Описание 2`, `Описание 3`, `Описание 4`, `Описание 5`, `Описание 6`, `Описание 7`, `Описание 8`];
 const PHOTOS = [
   `http://o0.github.io/assets/images/tokyo/hotel1.jpg`,
   `http://o0.github.io/assets/images/tokyo/hotel2.jpg`,
@@ -76,7 +76,7 @@ const generateAd = function (index) {
     checkin: TIMES[Math.floor(Math.random() * TIMES.length)],
     checkout: TIMES[Math.floor(Math.random() * TIMES.length)],
     features: generateFeatures(),
-    discription: DISCRIPTIONS[Math.floor(Math.random() * DISCRIPTIONS.length)],
+    description: DESCRIPTIONS[Math.floor(Math.random() * DESCRIPTIONS.length)],
     photos: generatePhotos()
   };
 
@@ -133,3 +133,80 @@ const renderPins = function (pins) {
 
 const mapPins = showMap().querySelector(`.map__pins`);
 mapPins.appendChild(renderPins(generateAds()));
+
+// вторая часть
+
+const firstElement = generateAds()[0];
+
+const cardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
+
+const typesTranslate = {
+  palace: `Дворец`,
+  flat: `Квартира`,
+  house: `Дом`,
+  bungalow: `Бунгало`
+};
+
+const renderCard = function (cardData) {
+  const card = cardTemplate.cloneNode(true);
+
+  card.querySelector(`.popup__title`).textContent = cardData.offer.title;
+  card.querySelector(`.popup__text--address`).textContent = cardData.offer.address;
+  card.querySelector(`.popup__text--price`).textContent = cardData.offer.price + `₽/ночь`;
+  card.querySelector(`.popup__type`).textContent = typesTranslate[cardData.offer.type];
+  card.querySelector(`.popup__text--capacity`).textContent = cardData.offer.rooms + ` комнаты для ` + cardData.offer.guests + ` гостей`;
+  card.querySelector(`.popup__text--time`).textContent = `Заезд после ` + cardData.offer.checkin + `, выезд до ` + cardData.offer.checkout;
+  // card.querySelector(`.popup__features`).textContent = ;
+
+  // features
+
+  const featuresArr = firstElement.offer.features;
+  let featuresCollection = card.querySelectorAll(`.popup__feature`);
+
+  for (let i = 0; i < featuresCollection.length; i++) {
+    let featureIncluded = false;
+
+    for (let j = 0; j < featuresArr.length; j++) {
+      if (featuresCollection[i].classList.contains(`popup__feature--` + featuresArr[j])) {
+        featureIncluded = true;
+      }
+    }
+
+    if (featureIncluded === false) {
+      featuresCollection[i].parentElement.removeChild(featuresCollection[i]);
+    }
+  }
+
+  // features-end
+
+  card.querySelector(`.popup__description`).textContent = cardData.offer.description;
+
+  // photos
+
+  const popupPhotos = card.querySelector(`.popup__photos`);
+  const popupPhoto = popupPhotos.querySelector(`.popup__photo`);
+  const photos = cardData.offer.photos;
+
+  popupPhotos.removeChild(popupPhoto);
+
+  for (let i = 0; i < photos.length; i++) {
+    const photo = popupPhoto.cloneNode(true);
+    photo.src = photos[i];
+    popupPhotos.appendChild(photo);
+  }
+
+  // photos-end
+
+  card.querySelector(`.popup__avatar`).src = cardData.author.avatar;
+
+  return card;
+};
+
+// renderCard
+
+const map = document.querySelector(`.map`);
+const mapFiltersContainer = map.querySelector(`.map__filters-container`);
+
+map.insertBefore(renderCard(firstElement), mapFiltersContainer);
+
+// renderCard-end
