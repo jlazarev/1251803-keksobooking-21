@@ -103,35 +103,33 @@ const generateAds = function () {
 
 const showMap = function () {
   const map = document.querySelector(`.map`);
+  map.classList.remove(`map--faded`);
 
   return map;
 };
 
-
-showMap().classList.remove(`map--faded`);
-
-const mapPins = showMap().querySelector(`.map__pins`);
 const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 
-const renderPin = function (pinObj) {
+const renderPin = function (pinData) {
   const pinElement = pinTemplate.cloneNode(true);
 
-  pinElement.style.left = (pinObj.location.x - OFFSET_X) + `px`;
-  pinElement.style.top = (pinObj.location.y - OFFSET_Y) + `px`;
-  pinElement.querySelector(`img`).src = pinObj.author.avatar;
-  pinElement.querySelector(`img`).alt = pinObj.offer.title;
+  pinElement.style.left = (pinData.location.x - OFFSET_X) + `px`;
+  pinElement.style.top = (pinData.location.y - OFFSET_Y) + `px`;
+  pinElement.querySelector(`img`).src = pinData.author.avatar;
+  pinElement.querySelector(`img`).alt = pinData.offer.title;
 
   return pinElement;
 };
 
-const renderPins = function (pinsArr) {
+const renderPins = function (pins) {
   const fragment = document.createDocumentFragment();
 
-  for (let i = 0; i < pinsArr.length; i++) {
-    fragment.appendChild(renderPin(pinsArr[i]));
+  for (let i = 0; i < pins.length; i++) {
+    fragment.appendChild(renderPin(pins[i]));
   }
 
   return fragment;
 };
 
+const mapPins = showMap().querySelector(`.map__pins`);
 mapPins.appendChild(renderPins(generateAds()));
