@@ -101,12 +101,13 @@ const generateAds = function () {
   return ads;
 };
 
-const showMap = function () {
-  const map = document.querySelector(`.map`);
-  map.classList.remove(`map--faded`);
+const map = document.querySelector(`.map`);
 
-  return map;
+const showMap = function () {
+  map.classList.remove(`map--faded`);
 };
+
+showMap();
 
 const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 
@@ -131,7 +132,7 @@ const renderPins = function (pins) {
   return fragment;
 };
 
-const mapPins = showMap().querySelector(`.map__pins`);
+const mapPins = map.querySelector(`.map__pins`);
 mapPins.appendChild(renderPins(generateAds()));
 
 // вторая часть
@@ -147,27 +148,15 @@ const typesTranslate = {
   bungalow: `Бунгало`
 };
 
-const renderCard = function (cardData) {
-  const card = cardTemplate.cloneNode(true);
-
-  card.querySelector(`.popup__title`).textContent = cardData.offer.title;
-  card.querySelector(`.popup__text--address`).textContent = cardData.offer.address;
-  card.querySelector(`.popup__text--price`).textContent = cardData.offer.price + `₽/ночь`;
-  card.querySelector(`.popup__type`).textContent = typesTranslate[cardData.offer.type];
-  card.querySelector(`.popup__text--capacity`).textContent = cardData.offer.rooms + ` комнаты для ` + cardData.offer.guests + ` гостей`;
-  card.querySelector(`.popup__text--time`).textContent = `Заезд после ` + cardData.offer.checkin + `, выезд до ` + cardData.offer.checkout;
-  // card.querySelector(`.popup__features`).textContent = ;
-
-  // features
-
-  const featuresArr = firstElement.offer.features;
-  let featuresCollection = card.querySelectorAll(`.popup__feature`);
+const renderFeatures = function (element, cloneCard) {
+  const features = element.offer.features;
+  const featuresCollection = cloneCard.querySelectorAll(`.popup__feature`);
 
   for (let i = 0; i < featuresCollection.length; i++) {
     let featureIncluded = false;
 
-    for (let j = 0; j < featuresArr.length; j++) {
-      if (featuresCollection[i].classList.contains(`popup__feature--` + featuresArr[j])) {
+    for (let j = 0; j < features.length; j++) {
+      if (featuresCollection[i].classList.contains(`popup__feature--` + features[j])) {
         featureIncluded = true;
       }
     }
@@ -176,16 +165,12 @@ const renderCard = function (cardData) {
       featuresCollection[i].parentElement.removeChild(featuresCollection[i]);
     }
   }
+};
 
-  // features-end
-
-  card.querySelector(`.popup__description`).textContent = cardData.offer.description;
-
-  // photos
-
-  const popupPhotos = card.querySelector(`.popup__photos`);
+const renderPhotos = function (element, cloneCard) {
+  const popupPhotos = cloneCard.querySelector(`.popup__photos`);
   const popupPhoto = popupPhotos.querySelector(`.popup__photo`);
-  const photos = cardData.offer.photos;
+  const photos = element.offer.photos;
 
   popupPhotos.removeChild(popupPhoto);
 
@@ -194,19 +179,33 @@ const renderCard = function (cardData) {
     photo.src = photos[i];
     popupPhotos.appendChild(photo);
   }
+};
 
-  // photos-end
+const generateCard = function (cardData) {
+  const card = cardTemplate.cloneNode(true);
+
+  card.querySelector(`.popup__title`).textContent = cardData.offer.title;
+  card.querySelector(`.popup__text--address`).textContent = cardData.offer.address;
+  card.querySelector(`.popup__text--price`).textContent = cardData.offer.price + `₽/ночь`;
+  card.querySelector(`.popup__type`).textContent = typesTranslate[cardData.offer.type];
+  card.querySelector(`.popup__text--capacity`).textContent = cardData.offer.rooms + ` комнаты для ` + cardData.offer.guests + ` гостей`;
+  card.querySelector(`.popup__text--time`).textContent = `Заезд после ` + cardData.offer.checkin + `, выезд до ` + cardData.offer.checkout;
+
+  renderFeatures(cardData, card);
+
+  card.querySelector(`.popup__description`).textContent = cardData.offer.description;
+
+  renderPhotos(cardData, card);
 
   card.querySelector(`.popup__avatar`).src = cardData.author.avatar;
 
   return card;
 };
 
-// renderCard
+const renderCard = function (element) {
+  const mapFiltersContainer = map.querySelector(`.map__filters-container`);
 
-const map = document.querySelector(`.map`);
-const mapFiltersContainer = map.querySelector(`.map__filters-container`);
+  map.insertBefore(generateCard(element), mapFiltersContainer);
+};
 
-map.insertBefore(renderCard(firstElement), mapFiltersContainer);
-
-// renderCard-end
+renderCard(firstElement);
