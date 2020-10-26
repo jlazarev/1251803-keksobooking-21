@@ -132,12 +132,13 @@ const renderPins = function (pins) {
   return fragment;
 };
 
+const ads = generateAds();
 const mapPins = map.querySelector(`.map__pins`);
-mapPins.appendChild(renderPins(generateAds()));
+mapPins.appendChild(renderPins(ads));
 
 // вторая часть
 
-const firstElement = generateAds()[0];
+const openedAd = ads[0];
 
 const cardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
 
@@ -208,4 +209,4 @@ const renderCard = function (element) {
   map.insertBefore(generateCard(element), mapFiltersContainer);
 };
 
-renderCard(firstElement);
+renderCard(openedAd);
