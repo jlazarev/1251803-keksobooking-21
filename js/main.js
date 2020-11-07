@@ -220,7 +220,7 @@ const address = adForm.querySelector(`#address`);
 
 for (let i = 0; i < adFormfieldsets.length; i++) {
   adFormfieldsets[i].setAttribute(`disabled`, `disabled`);
-};
+}
 
 const filtersForm = map.querySelector(`.map__filters`);
 const mapFilters = filtersForm.querySelectorAll(`.map__filter`);
@@ -228,32 +228,32 @@ const mapFeatures = filtersForm.querySelector(`.map__features`);
 
 for (let i = 0; i < mapFilters.length; i++) {
   mapFilters[i].setAttribute(`disabled`, `disabled`);
-};
+}
 
 mapFeatures.setAttribute(`disabled`, `disabled`);
 
 const pinMain = map.querySelector(`.map__pin--main`);
 
-address.value = (parseInt(pinMain.style.left, 10) + Math.floor(pinMain.offsetWidth/2)) + `, ` + (parseInt(pinMain.style.top, 10) + Math.floor(pinMain.offsetHeight/2));
+address.value = (parseInt(pinMain.style.left, 10) + Math.floor(pinMain.offsetWidth / 2)) + `, ` + (parseInt(pinMain.style.top, 10) + Math.floor(pinMain.offsetHeight / 2));
 
 const showForm = function () {
   adForm.classList.remove(`ad-form--disabled`);
 
   for (let i = 0; i < adFormfieldsets.length; i++) {
     adFormfieldsets[i].removeAttribute(`disabled`);
-  };
+  }
 
   for (let i = 0; i < mapFilters.length; i++) {
     mapFilters[i].removeAttribute(`disabled`);
-  };
+  }
 
   mapFeatures.removeAttribute(`disabled`);
 
-  address.value = (parseInt(pinMain.style.left, 10) + Math.floor(pinMain.offsetWidth/2)) + `, ` + (parseInt(pinMain.style.top, 10) + Math.floor(pinMain.offsetHeight + OFFSET_OF_PIN));
+  address.value = (parseInt(pinMain.style.left, 10) + Math.floor(pinMain.offsetWidth / 2)) + `, ` + (parseInt(pinMain.style.top, 10) + Math.floor(pinMain.offsetHeight + OFFSET_OF_PIN));
 };
 
 pinMain.addEventListener(`mousedown`, function (evt) {
-  if (evt.which == 1) {
+  if (evt.which === 1) {
     showMap();
     showForm();
   }
@@ -272,18 +272,18 @@ const roomNumber = adForm.querySelector(`#room_number`);
 const capacity = adForm.querySelector(`#capacity`);
 
 const checkingGuests = function () {
-  if (roomNumber.value == 1 && capacity.value != 1) {
+  if (roomNumber.value === `1` && capacity.value !== `1`) {
     capacity.setCustomValidity(`Только для одного.`);
-  } else if (roomNumber.value == 2 && capacity.value != 1 && capacity.value != 2) {
+  } else if (roomNumber.value === `2` && capacity.value !== `1` && capacity.value !== `2`) {
     capacity.setCustomValidity(`1 или 2 гостя.`);
-  } else if (roomNumber.value == 3 && capacity.value == 0) {
+  } else if (roomNumber.value === `3` && capacity.value === `0`) {
     capacity.setCustomValidity(`Добавьте гостей`);
-  } else if (roomNumber.value == 100 && capacity.value != 0) {
+  } else if (roomNumber.value === `100` && capacity.value !== `0`) {
     capacity.setCustomValidity(`Уберите гостей`);
   } else {
     capacity.setCustomValidity(``);
   }
-}
+};
 
 checkingGuests();
 
