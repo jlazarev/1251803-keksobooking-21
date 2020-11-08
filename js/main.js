@@ -120,8 +120,8 @@ const renderPin = function (pinData) {
 const renderPins = function (pins) {
   const fragment = document.createDocumentFragment();
 
-  for (let i = 0; i < pins.length; i++) {
-    fragment.appendChild(renderPin(pins[i]));
+  for (const pin of pins) {
+    fragment.appendChild(renderPin(pin));
   }
 
   return fragment;
@@ -145,20 +145,11 @@ const addCard = function () {
 
   const renderFeatures = function (element, cloneCard) {
     const features = element.offer.features;
-    const featuresCollection = cloneCard.querySelectorAll(`.popup__feature`);
+    const featuresContainer = cloneCard.querySelector(`.popup__features`);
+    featuresContainer.innerHTML = ``;
 
-    for (let i = 0; i < featuresCollection.length; i++) {
-      let featureIncluded = false;
-
-      for (let j = 0; j < features.length; j++) {
-        if (featuresCollection[i].classList.contains(`popup__feature--` + features[j])) {
-          featureIncluded = true;
-        }
-      }
-
-      if (featureIncluded === false) {
-        featuresCollection[i].parentElement.removeChild(featuresCollection[i]);
-      }
+    for (const feature of features) {
+      featuresContainer.insertAdjacentHTML(`beforeend`, `<li class="popup__feature popup__feature--${feature}"></li>`);
     }
   };
 
@@ -169,10 +160,10 @@ const addCard = function () {
 
     popupPhotos.removeChild(popupPhoto);
 
-    for (let i = 0; i < photos.length; i++) {
-      const photo = popupPhoto.cloneNode(true);
-      photo.src = photos[i];
-      popupPhotos.appendChild(photo);
+    for (const photo of photos) {
+      const photoClone = popupPhoto.cloneNode(true);
+      photoClone.src = photo;
+      popupPhotos.appendChild(photoClone);
     }
   };
 
@@ -251,16 +242,16 @@ const adForm = document.querySelector(`.ad-form`);
 const adFormfieldsets = adForm.querySelectorAll(`.ad-form fieldset`);
 const address = adForm.querySelector(`#address`);
 
-for (let i = 0; i < adFormfieldsets.length; i++) {
-  adFormfieldsets[i].setAttribute(`disabled`, `disabled`);
+for (const fieldset of adFormfieldsets) {
+  fieldset.setAttribute(`disabled`, `disabled`);
 }
 
 const filtersForm = map.querySelector(`.map__filters`);
 const mapFilters = filtersForm.querySelectorAll(`.map__filter`);
 const mapFeatures = filtersForm.querySelector(`.map__features`);
 
-for (let i = 0; i < mapFilters.length; i++) {
-  mapFilters[i].setAttribute(`disabled`, `disabled`);
+for (const filter of mapFilters) {
+  filter.setAttribute(`disabled`, `disabled`);
 }
 
 mapFeatures.setAttribute(`disabled`, `disabled`);
@@ -272,12 +263,12 @@ address.value = (parseInt(pinMain.style.left, 10) + Math.floor(pinMain.offsetWid
 const showForm = function () {
   adForm.classList.remove(`ad-form--disabled`);
 
-  for (let i = 0; i < adFormfieldsets.length; i++) {
-    adFormfieldsets[i].removeAttribute(`disabled`);
+  for (const fieldset of adFormfieldsets) {
+    fieldset.removeAttribute(`disabled`);
   }
 
-  for (let i = 0; i < mapFilters.length; i++) {
-    mapFilters[i].removeAttribute(`disabled`);
+  for (const filter of mapFilters) {
+    filter.removeAttribute(`disabled`);
   }
 
   mapFeatures.removeAttribute(`disabled`);
