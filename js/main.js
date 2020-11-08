@@ -252,17 +252,20 @@ const showForm = function () {
   address.value = (parseInt(pinMain.style.left, 10) + Math.floor(pinMain.offsetWidth / 2)) + `, ` + (parseInt(pinMain.style.top, 10) + Math.floor(pinMain.offsetHeight + OFFSET_OF_PIN));
 };
 
+const showMapAndForm = function () {
+  showMap();
+  showForm();
+};
+
 pinMain.addEventListener(`mousedown`, function (evt) {
   if (evt.which === 1) {
-    showMap();
-    showForm();
+    showMapAndForm();
   }
 });
 
 pinMain.addEventListener(`keydown`, function (evt) {
   if (evt.key === `Enter`) {
-    showMap();
-    showForm();
+    showMapAndForm();
   }
 });
 
@@ -287,10 +290,6 @@ const checkingGuests = function () {
 
 checkingGuests();
 
-capacity.addEventListener(`change`, function () {
-  checkingGuests();
-});
+capacity.addEventListener(`change`, checkingGuests);
 
-roomNumber.addEventListener(`change`, function () {
-  checkingGuests();
-});
+roomNumber.addEventListener(`change`, checkingGuests);
