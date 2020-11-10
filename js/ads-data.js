@@ -26,8 +26,8 @@
   };
 
   const LOCATION_RANGE_X = {
-    min: 25,
-    max: 1175
+    min: 0,
+    max: 1200
   };
 
   const generateFeatures = function () {
@@ -101,6 +101,8 @@
   };
 
   window.adsData = {
+    rangeY: LOCATION_RANGE_Y,
+    rangeX: LOCATION_RANGE_X,
     ads: generateAds
   };
 })();
