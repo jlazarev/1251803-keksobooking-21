@@ -53,36 +53,49 @@
 
   const successTemplate = document.querySelector(`#success`).content.querySelector(`.success`);
   const successElement = successTemplate.cloneNode(true);
-  const body = document.querySelector(`body`);
+  const main = document.querySelector(`main`);
 
-  const onSuccessEscPress = function (evt) {
-    if (evt.key === `Escape`) {
-      evt.preventDefault();
+  const addModal = function (messageElement) {
+    const onModalEscPress = function (evt) {
+      if (evt.key === `Escape`) {
+        evt.preventDefault();
 
-      deleteSuccess();
-    }
+        deleteModal();
+      }
+    };
+
+    const deleteModal = function () {
+      main.removeChild(messageElement);
+
+      main.removeEventListener(`click`, deleteModal);
+      document.removeEventListener(`keydown`, onModalEscPress);
+    };
+
+    const showModal = function () {
+      main.appendChild(messageElement);
+
+      main.addEventListener(`click`, deleteModal);
+      document.addEventListener(`keydown`, onModalEscPress);
+    };
+
+    showModal();
   };
 
-  const deleteSuccess = function () {
-    body.removeChild(successElement);
-
-    body.removeEventListener(`click`, deleteSuccess);
-    document.removeEventListener(`keydown`, onSuccessEscPress);
+  const successHandler = function () {
+    adFormElement.reset();
+    disabledForm();
+    addModal(successElement);
   };
 
-  const showSuccess = function () {
-    body.appendChild(successElement);
+  const errorTemplate = document.querySelector(`#error`).content.querySelector(`.error`);
+  const errorElement = errorTemplate.cloneNode(true);
 
-    body.addEventListener(`click`, deleteSuccess);
-    document.addEventListener(`keydown`, onSuccessEscPress);
+  const errorHandler = function () {
+    addModal(errorElement);
   };
 
   const submitHandler = function (evt) {
-    window.upload(new FormData(adFormElement), function () {
-      adFormElement.reset();
-      disabledForm();
-      showSuccess();
-    });
+    window.upload(new FormData(adFormElement), successHandler, errorHandler);
 
     evt.preventDefault();
   };
