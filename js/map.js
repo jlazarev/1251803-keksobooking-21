@@ -21,8 +21,7 @@
       document.body.insertAdjacentElement(`afterbegin`, node);
     };
 
-    window.load(successHandler, errorHandler);
-
+    window.download(successHandler, errorHandler);
   };
 
   window.map = {
