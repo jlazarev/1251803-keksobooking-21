@@ -2,6 +2,16 @@
 'use strict';
 
 (function () {
+  const LOCATION_RANGE_Y = {
+    min: 130,
+    max: 630
+  };
+
+  const LOCATION_RANGE_X = {
+    min: 0,
+    max: 1200
+  };
+
   const showMapAndForm = function () {
     window.map.showMap();
     window.form.showForm();
@@ -46,8 +56,8 @@
         window.form.pinMain.style.left = (newCoords.x) + `px`;
 
         const borderY = {
-          top: window.adsData.rangeY.min - (window.form.pinMain.offsetHeight + window.form.offsetPin),
-          bottom: window.adsData.rangeY.max - (window.form.pinMain.offsetHeight + window.form.offsetPin)
+          top: LOCATION_RANGE_Y.min - (window.form.pinMain.offsetHeight + window.form.offsetPin),
+          bottom: LOCATION_RANGE_Y.max - (window.form.pinMain.offsetHeight + window.form.offsetPin)
         };
 
         if (newCoords.y <= borderY.top) {
@@ -57,8 +67,8 @@
         }
 
         const borderX = {
-          left: window.adsData.rangeX.min - (window.form.pinMain.offsetWidth / 2),
-          right: window.adsData.rangeX.max - (window.form.pinMain.offsetWidth / 2)
+          left: LOCATION_RANGE_X.min - (window.form.pinMain.offsetWidth / 2),
+          right: LOCATION_RANGE_X.max - (window.form.pinMain.offsetWidth / 2)
         };
 
         if (newCoords.x <= borderX.left) {

@@ -1,10 +1,9 @@
 'use strict';
 
 (function () {
-  const adsArr = window.adsData.ads();
   const mapPinsElement = window.pins.map.querySelector(`.map__pins`);
 
-  const addingCard = function () {
+  const addingCard = function (ads) {
 
     const pins = mapPinsElement.querySelectorAll(`.map__pin:not(.map__pin--main)`);
 
@@ -103,14 +102,13 @@
 
     for (let i = 0; i < pins.length; i++) {
       pins[i].addEventListener(`click`, function () {
-        openCard(adsArr[i]);
+        openCard(ads[i]);
       });
     }
   };
 
   window.card = {
     mapPins: mapPinsElement,
-    ads: adsArr,
     addCard: addingCard
   };
 })();
