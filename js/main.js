@@ -12,22 +12,23 @@
     max: 1200
   };
 
+  let firstTime = true;
+
   const showMapAndForm = function () {
-    window.map.showMap();
+    if (firstTime) {
+      window.map.showMap();
+
+      firstTime = false;
+    }
+
     window.form.showForm();
   };
-
-  let firstTime = true;
 
   window.form.pinMain.addEventListener(`mousedown`, function (evt) {
     if (evt.which === 1) {
       evt.preventDefault();
 
-      if (firstTime) {
-        showMapAndForm();
-
-        firstTime = false;
-      }
+      showMapAndForm();
 
       let startCoords = {
         x: evt.clientX,
