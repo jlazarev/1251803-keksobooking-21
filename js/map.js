@@ -7,6 +7,7 @@
     const successHandler = function (ads) {
       window.card.mapPins.appendChild(window.pins.pins(ads));
       window.card.addCard(ads);
+      window.form.showFilter();
     };
 
     const errorHandler = function (errorMessage) {

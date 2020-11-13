@@ -42,13 +42,15 @@
       fieldset.removeAttribute(`disabled`);
     }
 
+    addressElement.value = getCoordsString(mapPinMain);
+  };
+
+  const activationFilter = function () {
     for (const filter of mapFilters) {
       filter.removeAttribute(`disabled`);
     }
 
     mapFeatures.removeAttribute(`disabled`);
-
-    addressElement.value = getCoordsString(mapPinMain);
   };
 
   const successTemplate = document.querySelector(`#success`).content.querySelector(`.success`);
@@ -108,6 +110,7 @@
     address: addressElement,
     offsetPin: OFFSET_OF_PIN,
     showForm: activationForm,
+    showFilter: activationFilter,
     getCoordsStr: getCoordsString
   };
 })();
