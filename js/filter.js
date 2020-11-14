@@ -15,6 +15,8 @@
     const housingType = document.querySelector(`#housing-type`);
 
     housingType.addEventListener(`change`, function () {
+      window.card.deleteCard();
+
       housingValue = housingType.value;
       let ads = adsData;
 

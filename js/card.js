@@ -3,102 +3,103 @@
 (function () {
   const mapPinsElement = window.pins.map.querySelector(`.map__pins`);
 
-  const addingCard = function (ads) {
+  const cardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
 
-    const pins = mapPinsElement.querySelectorAll(`.map__pin:not(.map__pin--main)`);
+  const typesTranslate = {
+    palace: `Дворец`,
+    flat: `Квартира`,
+    house: `Дом`,
+    bungalow: `Бунгало`
+  };
 
-    const cardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
+  const renderFeatures = function (element, cloneCard) {
+    const features = element.offer.features;
+    const featuresContainer = cloneCard.querySelector(`.popup__features`);
+    featuresContainer.innerHTML = ``;
 
-    const typesTranslate = {
-      palace: `Дворец`,
-      flat: `Квартира`,
-      house: `Дом`,
-      bungalow: `Бунгало`
-    };
+    for (const feature of features) {
+      featuresContainer.insertAdjacentHTML(`beforeend`, `<li class="popup__feature popup__feature--${feature}"></li>`);
+    }
+  };
 
-    const renderFeatures = function (element, cloneCard) {
-      const features = element.offer.features;
-      const featuresContainer = cloneCard.querySelector(`.popup__features`);
-      featuresContainer.innerHTML = ``;
+  const renderPhotos = function (element, cloneCard) {
+    const popupPhotos = cloneCard.querySelector(`.popup__photos`);
+    const popupPhoto = popupPhotos.querySelector(`.popup__photo`);
+    const photos = element.offer.photos;
 
-      for (const feature of features) {
-        featuresContainer.insertAdjacentHTML(`beforeend`, `<li class="popup__feature popup__feature--${feature}"></li>`);
-      }
-    };
+    popupPhotos.removeChild(popupPhoto);
 
-    const renderPhotos = function (element, cloneCard) {
-      const popupPhotos = cloneCard.querySelector(`.popup__photos`);
-      const popupPhoto = popupPhotos.querySelector(`.popup__photo`);
-      const photos = element.offer.photos;
+    for (const photo of photos) {
+      const photoClone = popupPhoto.cloneNode(true);
+      photoClone.src = photo;
+      popupPhotos.appendChild(photoClone);
+    }
+  };
 
-      popupPhotos.removeChild(popupPhoto);
+  const generateCard = function (cardData) {
+    const card = cardTemplate.cloneNode(true);
 
-      for (const photo of photos) {
-        const photoClone = popupPhoto.cloneNode(true);
-        photoClone.src = photo;
-        popupPhotos.appendChild(photoClone);
-      }
-    };
+    card.querySelector(`.popup__title`).textContent = cardData.offer.title;
+    card.querySelector(`.popup__text--address`).textContent = cardData.offer.address;
+    card.querySelector(`.popup__text--price`).textContent = cardData.offer.price + `₽/ночь`;
+    card.querySelector(`.popup__type`).textContent = typesTranslate[cardData.offer.type];
+    card.querySelector(`.popup__text--capacity`).textContent = cardData.offer.rooms + ` комнаты для ` + cardData.offer.guests + ` гостей`;
+    card.querySelector(`.popup__text--time`).textContent = `Заезд после ` + cardData.offer.checkin + `, выезд до ` + cardData.offer.checkout;
 
-    const generateCard = function (cardData) {
-      const card = cardTemplate.cloneNode(true);
+    renderFeatures(cardData, card);
 
-      card.querySelector(`.popup__title`).textContent = cardData.offer.title;
-      card.querySelector(`.popup__text--address`).textContent = cardData.offer.address;
-      card.querySelector(`.popup__text--price`).textContent = cardData.offer.price + `₽/ночь`;
-      card.querySelector(`.popup__type`).textContent = typesTranslate[cardData.offer.type];
-      card.querySelector(`.popup__text--capacity`).textContent = cardData.offer.rooms + ` комнаты для ` + cardData.offer.guests + ` гостей`;
-      card.querySelector(`.popup__text--time`).textContent = `Заезд после ` + cardData.offer.checkin + `, выезд до ` + cardData.offer.checkout;
+    card.querySelector(`.popup__description`).textContent = cardData.offer.description;
 
-      renderFeatures(cardData, card);
+    renderPhotos(cardData, card);
 
-      card.querySelector(`.popup__description`).textContent = cardData.offer.description;
+    card.querySelector(`.popup__avatar`).src = cardData.author.avatar;
 
-      renderPhotos(cardData, card);
+    return card;
+  };
 
-      card.querySelector(`.popup__avatar`).src = cardData.author.avatar;
+  const renderCard = function (element) {
+    const mapFiltersContainer = window.pins.map.querySelector(`.map__filters-container`);
 
-      return card;
-    };
+    window.pins.map.insertBefore(generateCard(element), mapFiltersContainer);
+  };
 
-    const renderCard = function (element) {
-      const mapFiltersContainer = window.pins.map.querySelector(`.map__filters-container`);
+  // события с карточкой
 
-      window.pins.map.insertBefore(generateCard(element), mapFiltersContainer);
-    };
+  const onPopupEscPress = function (evt) {
+    if (evt.key === `Escape`) {
+      evt.preventDefault();
+      closeCard();
+    }
+  };
 
-    // события с карточкой
+  const openCard = function (ad) {
+    const oldCard = window.pins.map.querySelector(`.map__card`);
 
-    const onPopupEscPress = function (evt) {
-      if (evt.key === `Escape`) {
-        evt.preventDefault();
-        closeCard();
-      }
-    };
+    if (oldCard !== null) {
+      oldCard.parentElement.removeChild(oldCard);
+    }
 
-    const openCard = function (ad) {
-      const oldCard = window.pins.map.querySelector(`.map__card`);
+    renderCard(ad);
 
-      if (oldCard !== null) {
-        oldCard.parentElement.removeChild(oldCard);
-      }
+    document.addEventListener(`keydown`, onPopupEscPress);
 
-      renderCard(ad);
+    const popupClose = window.pins.map.querySelector(`.popup__close`);
 
-      document.addEventListener(`keydown`, onPopupEscPress);
+    popupClose.addEventListener(`click`, closeCard);
+  };
 
-      const popupClose = window.pins.map.querySelector(`.popup__close`);
+  const closeCard = function () {
+    const card = window.pins.map.querySelector(`.map__card`);
 
-      popupClose.addEventListener(`click`, closeCard);
-    };
-
-    const closeCard = function () {
-      const card = window.pins.map.querySelector(`.map__card`);
-
+    if (card) {
       card.parentElement.removeChild(card);
 
       document.removeEventListener(`keydown`, onPopupEscPress);
-    };
+    }
+  };
+
+  const addingCard = function (ads) {
+    const pins = mapPinsElement.querySelectorAll(`.map__pin:not(.map__pin--main)`);
 
     for (let i = 0; i < pins.length; i++) {
       pins[i].addEventListener(`click`, function () {
@@ -109,6 +110,7 @@
 
   window.card = {
     mapPins: mapPinsElement,
-    addCard: addingCard
+    addCard: addingCard,
+    deleteCard: closeCard
   };
 })();
