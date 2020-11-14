@@ -2,8 +2,8 @@
 
 (function () {
   const filterData = function (adsData) {
-    let housingValue;
-    let priceValue;
+    // let housingValue;
+    // let priceValue;
 
     const housingType = window.pins.map.querySelector(`#housing-type`);
     const housingPrice = window.pins.map.querySelector(`#housing-price`);
@@ -31,9 +31,9 @@
         if (housingPrice.value === `low`) {
           return ad.offer.price < 10000;
         } else if (housingPrice.value === `middle`) {
-          return (10000 <= ad.offer.price && ad.offer.price <= 50000);
-        } else if (housingPrice.value === `high`) {
-          return 50000 < ad.offer.price;
+          return (ad.offer.price >= 10000 && ad.offer.price <= 50000);
+        } else {
+          return ad.offer.price > 50000;
         }
       });
 
@@ -41,18 +41,18 @@
     };
 
     const filterAll = function (ads) {
-      let adsFilter = ads
+      let adsFilter = ads;
 
       adsFilter = housingTypeFilter(adsFilter);
       adsFilter = housingPriceFilter(adsFilter);
 
-      return adsFilter
+      return adsFilter;
     };
 
     housingType.addEventListener(`change`, function () {
       window.card.deleteCard();
 
-      housingValue = housingType.value;
+      // housingValue = housingType.value;
       let ads = adsData;
 
       // if (housingValue !== `any`) {
@@ -74,7 +74,7 @@
     housingPrice.addEventListener(`change`, function () {
       window.card.deleteCard();
 
-      priceValue = housingPrice.value;
+      // priceValue = housingPrice.value;
       let ads = adsData;
 
       // if (priceValue !== `any`) {
