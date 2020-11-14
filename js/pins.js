@@ -3,6 +3,7 @@
 (function () {
   const OFFSET_X = 25;
   const OFFSET_Y = 70;
+  const MAX_PINS_COUNT = 5;
 
   const mapElement = document.querySelector(`.map`);
 
@@ -21,9 +22,14 @@
 
   const renderPins = function (pins) {
     const fragment = document.createDocumentFragment();
+    let countPins = MAX_PINS_COUNT;
 
-    for (const pin of pins) {
-      fragment.appendChild(renderPin(pin));
+    if (pins.length < MAX_PINS_COUNT) {
+      countPins = pins.length;
+    }
+
+    for (let i = 0; i < countPins; i++) {
+      fragment.appendChild(renderPin(pins[i]));
     }
 
     return fragment;
@@ -31,6 +37,6 @@
 
   window.pins = {
     map: mapElement,
-    pins: renderPins
+    getPins: renderPins
   };
 })();
