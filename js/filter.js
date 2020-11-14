@@ -2,7 +2,26 @@
 
 (function () {
   const filterData = function (adsData) {
-    let housingValue = `palace`;
+    let housingValue;
+    // let adsArr = adsData;
+
+    const housingType = window.pins.map.querySelector(`#housing-type`);
+    // const housingType = window.pins.map.querySelector(`#housing-price`);
+    // const housingType = window.pins.map.querySelector(`#housing-rooms`);
+    // const housingType = window.pins.map.querySelector(`#housing-guests`);
+
+    // const getRank = function (adsArr) {
+    //   let rank = 0;
+
+    //   if (wizard.colorCoat === coatColor) {
+    //     rank += 1;
+    //   }
+    //   if (wizard.colorEyes === eyesColor) {
+    //     rank += 1;
+    //   }
+
+    //   return rank;
+    // }
 
     const housingTypeFilter = function (ads) {
       const sameHousingType = ads.filter(function (ad) {
@@ -12,15 +31,15 @@
       return sameHousingType;
     };
 
-    const housingType = document.querySelector(`#housing-type`);
-
     housingType.addEventListener(`change`, function () {
       window.card.deleteCard();
 
       housingValue = housingType.value;
       let ads = adsData;
 
-      ads = housingTypeFilter(ads);
+      if (housingValue !== `any`) {
+        ads = housingTypeFilter(ads);
+      }
 
       const oldPins = window.card.mapPins.querySelectorAll(`.map__pin:not(.map__pin--main)`);
 
