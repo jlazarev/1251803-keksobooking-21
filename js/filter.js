@@ -8,7 +8,6 @@
     const housingType = window.pins.map.querySelector(`#housing-type`);
     const housingPrice = window.pins.map.querySelector(`#housing-price`);
 
-
     const housingTypeFilter = function (ads) {
       if (housingType.value === `any`) {
         return ads;
