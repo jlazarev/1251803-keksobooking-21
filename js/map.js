@@ -8,7 +8,7 @@
 
     const successHandler = function (data) {
       ads = data;
-      window.filter.filterAds(ads);
+      window.filterPlus.filterAds(ads);
       window.card.mapPins.appendChild(window.pins.getPins(ads));
       window.card.addCard(ads);
       window.form.showFilter();
