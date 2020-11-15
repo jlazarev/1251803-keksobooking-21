@@ -9,42 +9,42 @@
   const equal = (val1, val2, op) => {
 
     switch (op) {
-      case "=":
+      case `=`:
         return val1 === val2;
-      case "!=":
+      case `!=`:
         return val1 !== val2;
-      case ">":
+      case `>`:
         return val1 > val2;
-      case ">=":
+      case `>=`:
         return val1 >= val2;
-      case "<":
+      case `<`:
         return val1 < val2;
-      case "<=":
+      case `<=`:
         return val1 <= val2;
-      case "between":
-        return equal(val1, val2[0], ">=") && equal(val1, val2[1], "<=")
+      case `between`:
+        return equal(val1, val2[0], `>=`) && equal(val1, val2[1], `<=`);
       default:
         return val1 === val2;
     }
-  }
+  };
 
   const getValue = (obj, key) => {
-    const keyParts = key.split(".");
+    const keyParts = key.split(`.`);
     let value = obj[keyParts[0]];
     keyParts.shift();
     for (const keyPart of keyParts) {
-      if(value === null || value === undefined){
-          break;
-        }
-        value = value[keyPart];
+      if (value === null || value === undefined) {
+        break;
+      }
+      value = value[keyPart];
     }
 
     return value;
-  }
+  };
 
   const filterFunction = (items, itemsFilter, total) => {
     total = total || items.length;
-    const filters = Object.keys(itemsFilter).filter(key => itemsFilter[key] !== null && itemsFilter[key] !== undefined).map(key => ({key, ...itemsFilter[key]}));
+    const filters = Object.keys(itemsFilter).filter((key) => itemsFilter[key] !== null && itemsFilter[key] !== undefined).map((key) => Object.assign({}, {key}, itemsFilter[key]));
     if (filters.length === 0) {
       return items.slice(0, total);
     }
@@ -83,7 +83,7 @@
       obj = {
         op: `=`,
         value: type.value
-      }
+      };
     } else {
       obj = undefined;
     }
@@ -98,17 +98,17 @@
       obj = {
         op: `<`,
         value: 10000
-      }
+      };
     } else if (price.value === `middle`) {
       obj = {
         op: `between`,
         value: [10000, 50000]
-      }
+      };
     } else if (price.value === `high`) {
       obj = {
         op: `>`,
         value: 50000
-      }
+      };
     } else {
       obj = undefined;
     }
@@ -120,9 +120,7 @@
     const obj = {
       'offer.type': getObjType(type),
       'offer.price': getObjPrice(price)
-    }
-
-    console.log(obj);
+    };
 
     return obj;
   };
@@ -146,7 +144,7 @@
       window.card.mapPins.appendChild(window.pins.getPins(ads));
       window.card.addCard(ads);
     });
-  }
+  };
 
   window.filterPlus = {
     filterAds: filterData
