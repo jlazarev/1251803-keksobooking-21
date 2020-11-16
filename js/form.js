@@ -2,19 +2,24 @@
 
 (function () {
   const OFFSET_OF_PIN = 22;
+  const START_COORD = {
+    x: 570,
+    y: 374
+  };
 
-  const adFormElement = document.querySelector(`.ad-form`);
-  const adFormfieldsets = adFormElement.querySelectorAll(`.ad-form fieldset`);
-  const addressElement = adFormElement.querySelector(`#address`);
+  const adForm = document.querySelector(`.ad-form`);
+  const adFormfieldsets = adForm.querySelectorAll(`.ad-form fieldset`);
+  const address = adForm.querySelector(`#address`);
+  const resetButton = adForm.querySelector(`.ad-form__reset`);
 
   const filtersForm = window.pins.map.querySelector(`.map__filters`);
   const mapFilters = filtersForm.querySelectorAll(`.map__filter`);
   const mapFeatures = filtersForm.querySelector(`.map__features`);
 
-  const mapPinMain = window.pins.map.querySelector(`.map__pin--main`);
+  const pinMain = window.pins.map.querySelector(`.map__pin--main`);
 
   const disabledForm = function () {
-    adFormElement.classList.add(`ad-form--disabled`);
+    adForm.classList.add(`ad-form--disabled`);
 
     for (const fieldset of adFormfieldsets) {
       fieldset.setAttribute(`disabled`, `disabled`);
@@ -26,26 +31,29 @@
 
     mapFeatures.setAttribute(`disabled`, `disabled`);
 
-    addressElement.value = (parseInt(mapPinMain.style.left, 10) + Math.floor(mapPinMain.offsetWidth / 2)) + `, ` + (parseInt(mapPinMain.style.top, 10) + Math.floor(mapPinMain.offsetHeight / 2));
+    pinMain.style.left = START_COORD.x + `px`;
+    pinMain.style.top = START_COORD.y + `px`;
+
+    address.value = (parseInt(pinMain.style.left, 10) + Math.floor(pinMain.offsetWidth / 2)) + `, ` + (parseInt(pinMain.style.top, 10) + Math.floor(pinMain.offsetHeight / 2));
   };
 
   disabledForm();
 
-  const getCoordsString = function (pin) {
+  const getCoordsStr = function (pin) {
     return (parseInt(pin.style.left, 10) + Math.floor(pin.offsetWidth / 2)) + `, ` + (parseInt(pin.style.top, 10) + Math.floor(pin.offsetHeight + OFFSET_OF_PIN));
   };
 
-  const activationForm = function () {
-    adFormElement.classList.remove(`ad-form--disabled`);
+  const showForm = function () {
+    adForm.classList.remove(`ad-form--disabled`);
 
     for (const fieldset of adFormfieldsets) {
       fieldset.removeAttribute(`disabled`);
     }
 
-    addressElement.value = getCoordsString(mapPinMain);
+    address.value = getCoordsStr(pinMain);
   };
 
-  const activationFilter = function () {
+  const showFilter = function () {
     for (const filter of mapFilters) {
       filter.removeAttribute(`disabled`);
     }
@@ -83,9 +91,31 @@
     showModal();
   };
 
-  const successHandler = function () {
-    adFormElement.reset();
+  const resetPage = function () {
+    adForm.reset();
+    filtersForm.reset();
     disabledForm();
+
+    window.pins.map.classList.add(`map--faded`);
+
+    const oldPins = window.card.mapPins.querySelectorAll(`.map__pin:not(.map__pin--main)`);
+
+    for (const oldPin of oldPins) {
+      oldPin.parentElement.removeChild(oldPin);
+    }
+
+    window.card.closeCard();
+  };
+
+  resetButton.addEventListener(`click`, function (evt) {
+    evt.preventDefault();
+
+    resetPage();
+  });
+
+  const successHandler = function () {
+    resetPage();
+
     addModal(successElement);
   };
 
@@ -97,20 +127,20 @@
   };
 
   const submitHandler = function (evt) {
-    window.upload(new FormData(adFormElement), successHandler, errorHandler);
+    window.upload(new FormData(adForm), successHandler, errorHandler);
 
     evt.preventDefault();
   };
 
-  adFormElement.addEventListener(`submit`, submitHandler);
+  adForm.addEventListener(`submit`, submitHandler);
 
   window.form = {
-    pinMain: mapPinMain,
-    adForm: adFormElement,
-    address: addressElement,
+    pinMain,
+    adForm,
+    address,
     offsetPin: OFFSET_OF_PIN,
-    showForm: activationForm,
-    showFilter: activationFilter,
-    getCoordsStr: getCoordsString
+    showForm,
+    showFilter,
+    getCoordsStr
   };
 })();

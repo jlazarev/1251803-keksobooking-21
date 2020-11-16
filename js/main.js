@@ -1,4 +1,3 @@
-// file pin-main.js
 'use strict';
 
 (function () {
@@ -12,15 +11,8 @@
     max: 1200
   };
 
-  let firstTime = true;
-
   const showMapAndForm = function () {
-    if (firstTime) {
-      window.map.showMap();
-
-      firstTime = false;
-    }
-
+    window.map.showMap();
     window.form.showForm();
   };
 

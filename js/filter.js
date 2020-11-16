@@ -1,86 +1,179 @@
 'use strict';
 
 (function () {
-  const filterData = function (adsData) {
-    // let housingValue;
-    // let priceValue;
+  const MAX_FILTERED = 5;
+  const filterForm = window.pins.map.querySelector(`.map__filters`);
+  const housingPrice = window.pins.map.querySelector(`#housing-price`);
+  const housingType = window.pins.map.querySelector(`#housing-type`);
+  const housingRooms = window.pins.map.querySelector(`#housing-rooms`);
+  const housingGuests = window.pins.map.querySelector(`#housing-guests`);
 
-    const housingType = window.pins.map.querySelector(`#housing-type`);
-    const housingPrice = window.pins.map.querySelector(`#housing-price`);
+  const equal = (val1, val2, op) => {
 
-    const housingTypeFilter = function (ads) {
-      if (housingType.value === `any`) {
-        return ads;
+    switch (op) {
+      case `=`:
+        return val1 === val2;
+      case `!=`:
+        return val1 !== val2;
+      case `>`:
+        return val1 > val2;
+      case `>=`:
+        return val1 >= val2;
+      case `<`:
+        return val1 < val2;
+      case `<=`:
+        return val1 <= val2;
+      case `between`:
+        return equal(val1, val2[0], `>=`) && equal(val1, val2[1], `<=`);
+      case `in`:
+        const intersection = val1.filter((x) => val2.includes(x));
+
+        return JSON.stringify(intersection) === JSON.stringify(val2);
+      default:
+        return val1 === val2;
+    }
+  };
+
+  const getValue = (obj, key) => {
+    const keyParts = key.split(`.`);
+    let value = obj[keyParts[0]];
+    keyParts.shift();
+    for (const keyPart of keyParts) {
+      if (value === null || value === undefined) {
+        break;
       }
+      value = value[keyPart];
+    }
 
-      const sameHousingType = ads.filter(function (ad) {
-        return ad.offer.type === housingType.value;
-      });
+    return value;
+  };
 
-      return sameHousingType;
-    };
-
-    const housingPriceFilter = function (ads) {
-      if (housingPrice.value === `any`) {
-        return ads;
-      }
-
-      const sameHousingPrice = ads.filter(function (ad) {
-
-        if (housingPrice.value === `low`) {
-          return ad.offer.price < 10000;
-        } else if (housingPrice.value === `middle`) {
-          return (ad.offer.price >= 10000 && ad.offer.price <= 50000);
-        } else {
-          return ad.offer.price > 50000;
+  const filterFunction = (items, itemsFilter, total) => {
+    total = total || items.length;
+    const filters = Object.keys(itemsFilter).filter((key) => itemsFilter[key] !== null && itemsFilter[key] !== undefined).map((key) => Object.assign({}, {key}, itemsFilter[key]));
+    if (filters.length === 0) {
+      return items.slice(0, total);
+    }
+    const filtered = [];
+    for (const item of items.slice(0)) {
+      let match = true;
+      for (const filter of filters) {
+        const {
+          key,
+          op,
+          value
+        } = filter;
+        const itemValue = getValue(item, key);
+        if (!equal(itemValue, value, op)) {
+          match = false;
+          break;
         }
-      });
-
-      return sameHousingPrice;
-    };
-
-    const filterAll = function (ads) {
-      let adsFilter = ads;
-
-      adsFilter = housingTypeFilter(adsFilter);
-      adsFilter = housingPriceFilter(adsFilter);
-
-      return adsFilter;
-    };
-
-    housingType.addEventListener(`change`, function () {
-      window.card.deleteCard();
-
-      // housingValue = housingType.value;
-      let ads = adsData;
-
-      // if (housingValue !== `any`) {
-      //   ads = housingTypeFilter(ads);
-      // }
-
-      ads = filterAll(ads);
-
-      const oldPins = window.card.mapPins.querySelectorAll(`.map__pin:not(.map__pin--main)`);
-
-      for (const oldPin of oldPins) {
-        oldPin.parentElement.removeChild(oldPin);
       }
+      if (match) {
+        filtered.push(item);
+        if (filtered.length >= total) {
+          break;
+        }
+      }
+    }
 
-      window.card.mapPins.appendChild(window.pins.getPins(ads));
-      window.card.addCard(ads);
+    return filtered;
+  };
+
+  const getObjType = function (type) {
+    let obj = {};
+
+    if (type.value !== `any`) {
+      obj = {
+        op: `=`,
+        value: type.value
+      };
+    } else {
+      obj = undefined;
+    }
+
+    return obj;
+  };
+
+  const getObjPrice = function (price) {
+    let obj = {};
+
+    if (price.value === `low`) {
+      obj = {
+        op: `<`,
+        value: 10000
+      };
+    } else if (price.value === `middle`) {
+      obj = {
+        op: `between`,
+        value: [10000, 50000]
+      };
+    } else if (price.value === `high`) {
+      obj = {
+        op: `>`,
+        value: 50000
+      };
+    } else {
+      obj = undefined;
+    }
+
+    return obj;
+  };
+
+  const getObjValue = function (unit) {
+    let obj = {};
+
+    if (unit.value !== `any`) {
+      obj = {
+        op: `=`,
+        value: parseInt(unit.value, 10)
+      };
+    } else {
+      obj = undefined;
+    }
+
+    return obj;
+  };
+
+  const getArrFeatures = function (features) {
+    const arr = [];
+    let obj = {};
+
+    features.forEach((feature) => {
+      arr.push(feature.value);
     });
 
-    housingPrice.addEventListener(`change`, function () {
-      window.card.deleteCard();
+    obj = {
+      op: `in`,
+      value: arr
+    };
 
-      // priceValue = housingPrice.value;
+    return obj;
+  };
+
+  const getFilterObj = function (type, price, rooms, guests, features) {
+    const obj = {
+      'offer.type': getObjType(type),
+      'offer.price': getObjPrice(price),
+      'offer.rooms': getObjValue(rooms),
+      'offer.guests': getObjValue(guests),
+      'offer.features': getArrFeatures(features)
+    };
+
+    return obj;
+  };
+
+  const filterAds = function (adsData) {
+
+    filterForm.addEventListener(`change`, function () {
+      window.card.closeCard();
+
+      const housingFeatures = window.pins.map.querySelectorAll(`.map__checkbox:checked`);
+
       let ads = adsData;
+      const filter = getFilterObj(housingType, housingPrice, housingRooms, housingGuests, housingFeatures);
 
-      // if (priceValue !== `any`) {
-      //   ads = housingPriceFilter(ads);
-      // }
-
-      ads = filterAll(ads);
+      ads = filterFunction(ads, filter, MAX_FILTERED);
 
       const oldPins = window.card.mapPins.querySelectorAll(`.map__pin:not(.map__pin--main)`);
 
@@ -88,12 +181,12 @@
         oldPin.parentElement.removeChild(oldPin);
       }
 
-      window.card.mapPins.appendChild(window.pins.getPins(ads));
+      window.card.mapPins.appendChild(window.pins.renderPins(ads));
       window.card.addCard(ads);
     });
   };
 
   window.filter = {
-    filterAds: filterData
+    filterAds
   };
 })();

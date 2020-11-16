@@ -5,7 +5,7 @@
   const OFFSET_Y = 70;
   const MAX_PINS_COUNT = 5;
 
-  const mapElement = document.querySelector(`.map`);
+  const map = document.querySelector(`.map`);
 
   const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 
@@ -36,7 +36,7 @@
   };
 
   window.pins = {
-    map: mapElement,
-    getPins: renderPins
+    map,
+    renderPins
   };
 })();

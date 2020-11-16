@@ -3,13 +3,13 @@
 (function () {
   let ads = [];
 
-  const activationMap = function () {
+  const showMap = function () {
     window.pins.map.classList.remove(`map--faded`);
 
     const successHandler = function (data) {
       ads = data;
-      window.filterPlus.filterAds(ads);
-      window.card.mapPins.appendChild(window.pins.getPins(ads));
+      window.filter.filterAds(ads);
+      window.card.mapPins.appendChild(window.pins.renderPins(ads));
       window.card.addCard(ads);
       window.form.showFilter();
     };
@@ -30,6 +30,6 @@
   };
 
   window.map = {
-    showMap: activationMap
+    showMap
   };
 })();

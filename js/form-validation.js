@@ -1,6 +1,13 @@
 'use strict';
 
 (function () {
+  const MIN_PRICE = {
+    bungalow: 0,
+    flat: 1000,
+    house: 5000,
+    palace: 10000
+  };
+
   const roomNumber = window.form.adForm.querySelector(`#room_number`);
   const capacity = window.form.adForm.querySelector(`#capacity`);
 
@@ -28,20 +35,35 @@
   const price = window.form.adForm.querySelector(`#price`);
 
   const checkingPrice = function () {
-    if (typeHousing.value === `bungalow` && parseInt(price.value, 10) < 0) {
+    if (typeHousing.value === `bungalow` && parseInt(price.value, 10) < MIN_PRICE.bungalow) {
       price.setCustomValidity(`Маловато`);
-    } else if (typeHousing.value === `flat` && parseInt(price.value, 10) < 1000) {
+    } else if (typeHousing.value === `flat` && parseInt(price.value, 10) < MIN_PRICE.flat) {
       price.setCustomValidity(`Маловато`);
-    } else if (typeHousing.value === `house` && parseInt(price.value, 10) < 5000) {
+    } else if (typeHousing.value === `house` && parseInt(price.value, 10) < MIN_PRICE.house) {
       price.setCustomValidity(`Маловато`);
-    } else if (typeHousing.value === `palace` && parseInt(price.value, 10) < 10000) {
+    } else if (typeHousing.value === `palace` && parseInt(price.value, 10) < MIN_PRICE.palace) {
       price.setCustomValidity(`Маловато`);
     } else {
       price.setCustomValidity(``);
     }
   };
 
-  typeHousing.addEventListener(`change`, checkingPrice);
+  const changePlaceHolder = function () {
+    if (typeHousing.value === `bungalow`) {
+      price.placeholder = MIN_PRICE.bungalow;
+    } else if (typeHousing.value === `flat`) {
+      price.placeholder = MIN_PRICE.flat;
+    } else if (typeHousing.value === `house`) {
+      price.placeholder = MIN_PRICE.house;
+    } else if (typeHousing.value === `palace`) {
+      price.placeholder = MIN_PRICE.palace;
+    }
+  };
+
+  typeHousing.addEventListener(`change`, function () {
+    checkingPrice();
+    changePlaceHolder();
+  });
 
   price.addEventListener(`input`, checkingPrice);
 

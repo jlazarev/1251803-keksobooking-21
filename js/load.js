@@ -1,8 +1,8 @@
 'use strict';
-// download
 
 (function () {
   const URL = `https://21.javascript.pages.academy/keksobooking/data`;
+  const URL_UPLOAD = `https://21.javascript.pages.academy/keksobooking`;
   const STATUS_CODE = {
     OK: 200
   };
@@ -33,10 +33,6 @@
     xhr.open(`GET`, URL);
     xhr.send();
   };
-
-  // upload
-
-  const URL_UPLOAD = `https://21.javascript.pages.academy/keksobooking`;
 
   window.upload = function (data, onSuccess, onError) {
     const xhr = new XMLHttpRequest();

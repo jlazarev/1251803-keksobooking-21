@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  const mapPinsElement = window.pins.map.querySelector(`.map__pins`);
+  const mapPins = window.pins.map.querySelector(`.map__pins`);
 
   const cardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
 
@@ -63,8 +63,6 @@
     window.pins.map.insertBefore(generateCard(element), mapFiltersContainer);
   };
 
-  // события с карточкой
-
   const onPopupEscPress = function (evt) {
     if (evt.key === `Escape`) {
       evt.preventDefault();
@@ -72,7 +70,7 @@
     }
   };
 
-  const openCard = function (ad) {
+  const openCard = function (ad, pin) {
     const oldCard = window.pins.map.querySelector(`.map__card`);
 
     if (oldCard !== null) {
@@ -86,6 +84,8 @@
     const popupClose = window.pins.map.querySelector(`.popup__close`);
 
     popupClose.addEventListener(`click`, closeCard);
+
+    pin.classList.add(`map__pin--active`);
   };
 
   const closeCard = function () {
@@ -98,19 +98,22 @@
     }
   };
 
-  const addingCard = function (ads) {
-    const pins = mapPinsElement.querySelectorAll(`.map__pin:not(.map__pin--main)`);
+  const addCard = function (ads) {
+    const pins = mapPins.querySelectorAll(`.map__pin:not(.map__pin--main)`);
 
     for (let i = 0; i < pins.length; i++) {
       pins[i].addEventListener(`click`, function () {
-        openCard(ads[i]);
+        for (const pin of pins) {
+          pin.classList.remove(`map__pin--active`);
+        }
+        openCard(ads[i], pins[i]);
       });
     }
   };
 
   window.card = {
-    mapPins: mapPinsElement,
-    addCard: addingCard,
-    deleteCard: closeCard
+    mapPins,
+    addCard,
+    closeCard
   };
 })();
