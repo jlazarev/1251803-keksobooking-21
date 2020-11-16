@@ -31,16 +31,16 @@
 
     mapFeatures.setAttribute(`disabled`, `disabled`);
 
-    pinMain.style.left = START_COORD.x + `px`;
-    pinMain.style.top = START_COORD.y + `px`;
+    pinMain.style.left = `${START_COORD.x}px`;
+    pinMain.style.top = `${START_COORD.y}px`;
 
-    address.value = (parseInt(pinMain.style.left, 10) + Math.floor(pinMain.offsetWidth / 2)) + `, ` + (parseInt(pinMain.style.top, 10) + Math.floor(pinMain.offsetHeight / 2));
+    address.value = `${parseInt(pinMain.style.left, 10) + Math.floor(pinMain.offsetWidth / 2)}, ${parseInt(pinMain.style.top, 10) + Math.floor(pinMain.offsetHeight / 2)}`;
   };
 
   disabledForm();
 
   const getCoordsStr = function (pin) {
-    return (parseInt(pin.style.left, 10) + Math.floor(pin.offsetWidth / 2)) + `, ` + (parseInt(pin.style.top, 10) + Math.floor(pin.offsetHeight + OFFSET_OF_PIN));
+    return `${parseInt(pin.style.left, 10) + Math.floor(pin.offsetWidth / 2)}, ${parseInt(pin.style.top, 10) + Math.floor(pin.offsetHeight + OFFSET_OF_PIN)}`;
   };
 
   const showForm = function () {

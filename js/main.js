@@ -12,6 +12,7 @@
   };
 
   const showMapAndForm = function () {
+
     window.map.showMap();
     window.form.showForm();
   };
@@ -20,7 +21,9 @@
     if (evt.which === 1) {
       evt.preventDefault();
 
-      showMapAndForm();
+      if (window.pins.map.classList.contains(`map--faded`)) {
+        showMapAndForm();
+      }
 
       let startCoords = {
         x: evt.clientX,
@@ -45,8 +48,8 @@
           y: window.form.pinMain.offsetTop - shift.y
         };
 
-        window.form.pinMain.style.top = (newCoords.y) + `px`;
-        window.form.pinMain.style.left = (newCoords.x) + `px`;
+        window.form.pinMain.style.top = `${newCoords.y}px`;
+        window.form.pinMain.style.left = `${newCoords.x}px`;
 
         const borderY = {
           top: LOCATION_RANGE_Y.min - (window.form.pinMain.offsetHeight + window.form.offsetPin),
@@ -54,9 +57,9 @@
         };
 
         if (newCoords.y <= borderY.top) {
-          window.form.pinMain.style.top = borderY.top + `px`;
+          window.form.pinMain.style.top = `${borderY.top}px`;
         } else if (newCoords.y >= borderY.bottom) {
-          window.form.pinMain.style.top = borderY.bottom + `px`;
+          window.form.pinMain.style.top = `${borderY.bottom}px`;
         }
 
         const borderX = {
@@ -65,9 +68,9 @@
         };
 
         if (newCoords.x <= borderX.left) {
-          window.form.pinMain.style.left = borderX.left + `px`;
+          window.form.pinMain.style.left = `${borderX.left}px`;
         } else if (newCoords.x >= borderX.right) {
-          window.form.pinMain.style.left = borderX.right + `px`;
+          window.form.pinMain.style.left = `${borderX.right}px`;
         }
 
         window.form.address.value = window.form.getCoordsStr(window.form.pinMain);

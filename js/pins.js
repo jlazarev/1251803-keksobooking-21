@@ -12,8 +12,8 @@
   const renderPin = function (pinData) {
     const pinElement = pinTemplate.cloneNode(true);
 
-    pinElement.style.left = (pinData.location.x - OFFSET_X) + `px`;
-    pinElement.style.top = (pinData.location.y - OFFSET_Y) + `px`;
+    pinElement.style.left = `${pinData.location.x - OFFSET_X}px`;
+    pinElement.style.top = `${pinData.location.y - OFFSET_Y}px`;
     pinElement.querySelector(`img`).src = pinData.author.avatar;
     pinElement.querySelector(`img`).alt = pinData.offer.title;
 
